@@ -1,6 +1,5 @@
 import Categories from "./components/Categories";
 import PropertyList from "./components/properties/PropertyList";
-import PropertyDetailPage from "./properties/[id]/page";
 
 export default function Home() {
   return (
