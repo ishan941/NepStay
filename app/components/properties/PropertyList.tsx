@@ -1,5 +1,5 @@
 "use client";
-
+import apiService from "@/app/services/apiService";
 import { useEffect, useState } from "react";
 import PropertyListItem from "./PropertyListItem";
 export type PropertyType = {
@@ -26,6 +26,7 @@ const PropertyList = () => {
       });
   };
   useEffect(() => {
+    apiService.get("/api/properties/");
     getProperties();
   }, []);
   return (
