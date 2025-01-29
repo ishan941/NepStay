@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Modal from "./Modal";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import useAddPropertyModal from "@/app/hooks/useAddPropertyModal";
 import CustomButton from "../forms/CustomButton";
 import Categories from "../addproperty/Categories";
@@ -20,6 +20,7 @@ const AddPropertyModel = () => {
   const [dataBathrooms, setDataBathrooms] = useState("");
   const [dataGuests, setDataGuests] = useState("");
   const [dataCountry, setDataCountry] = useState<SelectCountryValue>();
+  const [dataImage, setDataImage] = useState<File | null>(null);
   //
   //
   const addPropertymodal = useAddPropertyModal();
@@ -27,6 +28,12 @@ const AddPropertyModel = () => {
   //set datas
   const setCategory = (categories: string) => {
     setDataCategory(categories);
+  };
+  const setImage = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const tmpImage = event.target.files[0];
+      setDataImage(tmpImage);
+    }
   };
   //
   //
@@ -133,7 +140,33 @@ const AddPropertyModel = () => {
           />
         </>
       ) : (
-        <p>step 2</p>
+        <>
+          {" "}
+          <h2 className="mb-6, text-2xl">Image</h2>
+          <div className="pt-3 pb-6 space-y-4"></div>
+          <div className="py-4  mb-2 px-6 bg-gray-600 text-white rounded-xl">
+            <input type="file" accept="image/*" onChange={setImage} />
+          </div>
+          {dataImage && (
+            <div className="w-[200px]  mb-2 h-[150px] relative">
+              <Image
+                fill
+                alt="upload image"
+                src={URL.createObjectURL(dataImage)}
+                className="w-full h-full object-cover rounded-xl"
+              />
+            </div>
+          )}
+          <CustomButton
+            label={"Submit"}
+            onClick={() => console.log("submit")}
+          />{" "}
+          <CustomButton
+            className="mt-2 bg-gray-300 hover:bg-gray-500 text-gray-800 hover:text-white border-gray-400"
+            label={"Previous"}
+            onClick={() => setCurrentStep(4)}
+          />
+        </>
       )}
     </>
   );
