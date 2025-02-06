@@ -7,21 +7,51 @@ export type PropertyType = {
   title: string;
   price_per_night: number;
   image_url: string;
+  is_favorite: boolean;
 };
 
 interface PropertyListPropes {
   landlord_id?: string | null;
+  favorites?: boolean | null;
 }
 
-const PropertyList: React.FC<PropertyListPropes> = ({ landlord_id }) => {
+const PropertyList: React.FC<PropertyListPropes> = ({
+  landlord_id,
+  favorites,
+}) => {
   const [properties, setProperties] = useState<PropertyType[]>([]);
+  const markFavorite = (id: string, is_favorite: boolean) => {
+    const tempProperties = properties.map((property: PropertyType) => {
+      if (property.id == id) {
+        property.is_favorite = is_favorite;
+        if (is_favorite) {
+          console.log("added");
+        } else {
+          console.log("remover");
+        }
+      }
+      return property;
+    });
+    setProperties(tempProperties);
+  };
   const getProperties = async () => {
     let url = "/api/properties/";
     if (landlord_id) {
       url += `?landlord_id=${landlord_id}`;
+    } else if (favorites) {
+      url += "?is_favorites=true";
     }
     const tmpProperties = await apiService.get(url);
-    setProperties(tmpProperties.data);
+    setProperties(
+      tmpProperties.data.map((property: PropertyType) => {
+        if (tmpProperties.favorites.includes(property.id)) {
+          property.is_favorite = true;
+        } else {
+          property.is_favorite = false;
+        }
+        return property;
+      })
+    );
   };
   useEffect(() => {
     getProperties();
@@ -29,7 +59,15 @@ const PropertyList: React.FC<PropertyListPropes> = ({ landlord_id }) => {
   return (
     <>
       {properties.map((property) => {
-        return <PropertyListItem key={property.id} property={property} />;
+        return (
+          <PropertyListItem
+            key={property.id}
+            property={property}
+            markFavorite={(is_favorite: any) =>
+              markFavorite(property.id, is_favorite)
+            }
+          />
+        );
       })}
     </>
   );
