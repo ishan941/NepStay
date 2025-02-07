@@ -3,33 +3,35 @@
 
 import { cookies } from "next/headers"
 
-export async function handleLogin(userId: string, accessToken: string, refreshToken: string){
-     (await cookies()).set('session_userid', userId, {
+export async function handleLogin(userId: string, accessToken: string, refreshToken: string) {
+    const cookieStore = cookies();
+    (await cookieStore).set('session_userid', userId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24 * 7, // One week
+        maxAge: 60 * 60 * 24 * 7,
         path: '/'
     });
-     (await cookies()).set('session_access_token', accessToken, {
+    (await cookieStore).set('session_access_token', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60, // 60 minitues
+        maxAge: 60 * 60,
         path: '/'
     });
-     (await cookies()).set('session_refresh_token', refreshToken, {
+    (await cookieStore).set('session_refresh_token', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24 * 7, // One week
+        maxAge: 60 * 60 * 24 * 7,
         path: '/'
     });
 }
-
 
 export async function resetAuthCookies() {
-    (await cookies()).set('session_userid','');
-    (await cookies()).set('session_access_token','');
-    (await cookies()).set('session_refresh_token','');
+    const cookieStore = cookies();
+    (await cookieStore).delete('session_userid');
+    (await cookieStore).delete('session_access_token');
+    (await cookieStore).delete('session_refresh_token');
 }
+
 
 //
 // Get data
